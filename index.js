@@ -7,12 +7,17 @@ const list = require('./lib/view');
 require(`dotenv`).config();
 
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-  });
+const connection = mysql.createConnection(
+    {
+    host: 'localhost',
+    // MySQL username,
+    user: 'root',
+    // MySQL password
+    password: 'password',
+    database: 'employeeTracker_db'
+  },
+  console.log(`connected to the employeeTracker_db`)
+  );
 
 
 connection.connect(function(err){
@@ -26,8 +31,9 @@ exports.start = () => {
         {
             type: "list",
             message: "What would you like to do?",
+            name: "choice",
             choices: [
-                'VIEW ALL Employees.',
+                'VIEW ALL Employees',
                 'ADD Employee',
                 'UPDATE Employee Role',
                 'View All Roles',
@@ -38,4 +44,25 @@ exports.start = () => {
             ]
         }
     ])
+    .then(function(answer) {
+        if(answer.choice === 'VIEW ALL Employees'){
+            list.viewAllEmployees();
+        } else if (answer.choice === 'ADD Employee'){
+            add.addEmployee();
+        } else if(answer.choice === 'UPDATE Employee Role'){
+            update.updateEmployeeRole();
+        } else if(answer.choice === 'View All Roles') {
+            list.viewAllRoles();
+        } else if(answer.choice === 'Add Role') {
+            add.addRole();
+        } else if(answer.choice === 'View All Departments') {
+            list.viewAllDepartments();
+        } else if(answer.choice === 'Add Department') {
+            add.addDepartment();
+        } else {
+            console.log("Thank you have a wonderful day!");
+            connection.end();
+            return
+        }
+    })
 }
